@@ -131,7 +131,7 @@ export function UserCard({ handle, user, alias, pinned, color, containerId, move
         setNodeRef(el);
         cardRef.current = el;
       }}
-      className={`user-card${isDragging ? ' dragging' : ''}${user?.unfollowed ? ' unfollowed' : ''}${shownColor ? ' colored' : ''}${pinned ? ' pinned' : ''}`}
+      className={`user-card${isDragging ? ' dragging' : ''}${shownColor ? ' colored' : ''}${pinned ? ' pinned' : ''}`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -190,7 +190,6 @@ export function UserCard({ handle, user, alias, pinned, color, containerId, move
           <span className="name-text">{user?.name || displayHandle}</span>
           {user?.verified && <VerifiedBadge type={user.verified} />}
           {user?.followsYou && <span className="tag">关注了你</span>}
-          {user?.unfollowed && <span className="tag">已取关</span>}
         </div>
         {!editing && alias && <div className="alias">{alias}</div>}
         {editing && (

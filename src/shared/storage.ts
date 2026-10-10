@@ -63,11 +63,18 @@ export function mergeScraped(state: AppState, scraped: ScrapedUser[], now = Date
   return { ...state, users, ungrouped };
 }
 
-/** After a complete sync, users not seen since `syncStart` are flagged as unfollowed. */
-export function markUnfollowed(state: AppState, syncStart: number): AppState {
-  const users = { ...state.users };
-  for (const [k, u] of Object.entries(users)) {
-    if (u.lastSyncAt < syncStart && !u.unfollowed) users[k] = { ...u, unfollowed: true };
-  }
-  return { ...state, users };
+/** After a complete sync, users not seen since `syncStart` are no longer followed and get dropped everywhere. */
+export function removeUnfollowed(state: AppState, syncStart: number): AppState {
+  const gone = new Set(Object.keys(state.users).filter((k) => state.users[k].lastSyncAt < syncStart));
+  if (!gone.size) return state;
+  const keep = (h: string) => !gone.has(h);
+  const without = <T>(map: Record<string, T>) => Object.fromEntries(Object.entries(map).filter(([k]) => keep(k)));
+  return {
+    users: without(state.users),
+    aliases: without(state.aliases),
+    pinned: without(state.pinned),
+    colors: without(state.colors),
+    groups: state.groups.map((g) => ({ ...g, handles: g.handles.filter(keep) })),
+    ungrouped: state.ungrouped.filter(keep),
+  };
 }

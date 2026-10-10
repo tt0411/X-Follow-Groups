@@ -17,7 +17,6 @@ export interface XUser {
   followsYou?: boolean;
   followingCount?: number;
   followersCount?: number;
-  unfollowed?: boolean;
   lastSyncAt: number;
 }
 
@@ -37,7 +36,7 @@ export interface AppState {
   ungrouped: string[];
 }
 
-export type ScrapedUser = Omit<XUser, 'lastSyncAt' | 'unfollowed'>;
+export type ScrapedUser = Omit<XUser, 'lastSyncAt'>;
 
 export interface SyncStatus {
   running: boolean;

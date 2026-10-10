@@ -343,7 +343,7 @@ export default function App() {
                   onClick={() => chrome.runtime.sendMessage({ type: 'startSync', mode: 'full' } satisfies Message)}
                 >
                   全量同步
-                  <small>刷新所有人资料，标记已取关</small>
+                  <small>刷新所有人资料，移除已取关</small>
                 </button>
                 <hr />
                 <button onClick={exportJson}>导出数据</button>

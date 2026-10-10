@@ -73,7 +73,6 @@ export function HoverCard({ user, alias, anchor, onEnter, onLeave }: Props) {
           )}
         </div>
       )}
-      {user.unfollowed && <div className="hc-unfollowed">你已不再关注此账号</div>}
     </div>,
     document.body,
   );

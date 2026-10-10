@@ -1,5 +1,5 @@
 import { parseBundle, type FollowingOp } from '../shared/following';
-import { loadState, markUnfollowed, mergeScraped, updateState } from '../shared/storage';
+import { loadState, mergeScraped, removeUnfollowed, updateState } from '../shared/storage';
 import type { Message, PageInfo, SyncMode, SyncStatus } from '../shared/types';
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
@@ -132,8 +132,14 @@ chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
       };
       // A stale queryId usually surfaces as a 4xx; drop the cache so the next sync re-parses the bundle.
       if (msg.reason === 'error') chrome.storage.local.remove(OP_CACHE_KEY);
-      updateState((s) => (fullyWalked ? markUnfollowed(s, syncStart) : s)).then(() =>
-        setStatus({ running: false, message: messages[msg.reason] }),
+      let removed = 0;
+      updateState((s) => {
+        if (!fullyWalked) return s;
+        const next = removeUnfollowed(s, syncStart);
+        removed = Object.keys(s.users).length - Object.keys(next.users).length;
+        return next;
+      }).then(() =>
+        setStatus({ running: false, message: messages[msg.reason] + (removed ? `，移除已取关 ${removed} 人` : '') }),
       );
       break;
     }
